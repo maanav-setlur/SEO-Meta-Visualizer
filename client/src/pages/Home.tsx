@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Search, Loader2, ArrowRight, LayoutGrid, AlertTriangle, Code, Globe, Sparkles } from "lucide-react";
+import { SiFacebook, SiX } from "react-icons/si";
 import { GooglePreview, SocialPreview, TwitterPreview } from "@/components/analysis/SeoPreviews";
 import { IssueList } from "@/components/analysis/IssueList";
 import { SeoScore } from "@/components/analysis/SeoScore";
@@ -141,15 +142,15 @@ export default function Home() {
                     
                     <div className="space-y-2">
                       <h3 className="font-display font-bold text-lg flex items-center gap-2 text-[#1877F2]">
-                        <Facebook className="w-5 h-5 fill-current" />
+                        <SiFacebook className="w-5 h-5" />
                         Facebook / LinkedIn
                       </h3>
                       <SocialPreview meta={data.meta} url={data.url} />
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="font-display font-bold text-lg flex items-center gap-2 text-[#1DA1F2]">
-                        <Twitter className="w-5 h-5 fill-current" />
+                      <h3 className="font-display font-bold text-lg flex items-center gap-2 text-black dark:text-white">
+                        <SiX className="w-4 h-4" />
                         Twitter / X
                       </h3>
                       <TwitterPreview meta={data.meta} url={data.url} />
