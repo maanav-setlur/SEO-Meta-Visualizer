@@ -4,12 +4,12 @@ import { useAnalyzeSite } from "@/hooks/use-analysis";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-import { Search, Loader2, ArrowRight, LayoutGrid, Code, Globe, Sparkles } from "lucide-react";
+import { Search, Loader2, ArrowRight, LayoutGrid, Code, Lightbulb } from "lucide-react";
 import { SiFacebook, SiX } from "react-icons/si";
 import { GooglePreview, SocialPreview, TwitterPreview } from "@/components/analysis/SeoPreviews";
 import { IssueList } from "@/components/analysis/IssueList";
 import { SeoScore } from "@/components/analysis/SeoScore";
+import { Suggestions } from "@/components/analysis/Suggestions";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -18,10 +18,10 @@ export default function Home() {
 
   const handleAnalyze = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url) return;
-    let finalUrl = url;
-    if (!url.startsWith("http")) {
-      finalUrl = `https://${url}`;
+    if (!url.trim()) return;
+    let finalUrl = url.trim();
+    if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://")) {
+      finalUrl = `https://${finalUrl}`;
     }
     mutate({ url: finalUrl });
   };
@@ -48,7 +48,7 @@ export default function Home() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <Input
-                placeholder="Enter URL (e.g. apple.com)"
+                placeholder="apple.com"
                 className="pl-10 h-11 sm:h-12 text-base sm:text-lg border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-slate-300"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -81,40 +81,16 @@ export default function Home() {
         <AnimatePresence mode="wait">
           {data && (
             <motion.div
+              key={data.url}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6 sm:space-y-8"
             >
-              {/* Score and Stats Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div className="lg:col-span-2">
-                  <SeoScore issues={data.issues} />
-                </div>
-                
-                <Card className="p-4 sm:p-6 flex flex-row lg:flex-col justify-around lg:justify-center gap-4 bg-slate-900 text-white border-none shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/10 rounded-lg flex-shrink-0">
-                      <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-blue-300" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm text-slate-400">Title</p>
-                      <p className="text-lg sm:text-xl font-bold">{data.meta.title?.length || 0} chars</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/10 rounded-lg flex-shrink-0">
-                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm text-slate-400">Description</p>
-                      <p className="text-lg sm:text-xl font-bold">{data.meta.description?.length || 0} chars</p>
-                    </div>
-                  </div>
-                </Card>
-              </div>
+              {/* Combined Score Card */}
+              <SeoScore issues={data.issues} meta={data.meta} />
 
-              {/* Tabs - Combined Analysis and Raw Data */}
+              {/* Tabs */}
               <Tabs defaultValue="analysis" className="w-full">
                 <TabsList className="w-full justify-start h-auto p-1 bg-white border rounded-lg sm:rounded-xl mb-4 sm:mb-6 shadow-sm flex-wrap gap-1">
                   <TabsTrigger 
@@ -126,16 +102,24 @@ export default function Home() {
                     <span>Analysis</span>
                   </TabsTrigger>
                   <TabsTrigger 
+                    value="suggestions" 
+                    className="flex-1 sm:flex-none h-10 sm:h-12 px-3 sm:px-6 rounded-md sm:rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5 sm:gap-2 text-sm sm:text-base"
+                    data-testid="tab-suggestions"
+                  >
+                    <Lightbulb className="w-4 h-4" />
+                    <span>Suggestions</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
                     value="raw" 
                     className="flex-1 sm:flex-none h-10 sm:h-12 px-3 sm:px-6 rounded-md sm:rounded-lg data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 gap-1.5 sm:gap-2 text-sm sm:text-base"
                     data-testid="tab-raw"
                   >
                     <Code className="w-4 h-4" />
-                    <span>Raw Data</span>
+                    <span>Raw</span>
                   </TabsTrigger>
                 </TabsList>
 
-                {/* Combined Analysis Tab */}
+                {/* Analysis Tab */}
                 <TabsContent value="analysis" className="space-y-6 sm:space-y-8">
                   {/* Issues Section */}
                   <div className="bg-white rounded-xl border p-4 sm:p-6 shadow-sm">
@@ -169,6 +153,11 @@ export default function Home() {
                       <TwitterPreview meta={data.meta} url={data.url} />
                     </div>
                   </div>
+                </TabsContent>
+
+                {/* Suggestions Tab */}
+                <TabsContent value="suggestions">
+                  <Suggestions issues={data.issues} meta={data.meta} />
                 </TabsContent>
 
                 {/* Raw Data Tab */}
