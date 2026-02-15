@@ -1,4 +1,4 @@
-# SEO Vision
+# SEO Meta Visualizer
 
 A modern SEO meta tag analyzer that helps you optimize your website's search engine visibility and social media presence.
 
