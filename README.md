@@ -52,6 +52,10 @@ npm run dev
 
 The app runs on port 5000.
 
+## Live Demo
+
+Try it out: [seo-meta-visualizer--msetlur.replit.app](https://seo-meta-visualizer--msetlur.replit.app/)
+
 ## License
 
 MIT
